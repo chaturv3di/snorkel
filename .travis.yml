@@ -1,8 +1,11 @@
 # Travis CI config for Snorkel, a training data creation and management
 # system focused on information extraction
 
+# Use a docker image for access to Ubuntu 16.04 (more details below)
+sudo: required
 dist: trusty
-sudo: false  # to use container-based infra, see: http://docs.travis-ci.com/user/migrating-from-legacy/
+services:
+  - docker
 language: generic
 env:
   matrix:
@@ -14,6 +17,7 @@ cache:
     - download
 
 before_install:
+  - docker pull ubuntu:16.04
   - travis_retry
     wget https://repo.continuum.io/miniconda/Miniconda3-4.5.1-Linux-x86_64.sh
     --output-document=miniconda.sh
@@ -43,8 +47,8 @@ script:
   - python test/learning/pytorch/test_determinism.py
 
   # Run Tensorflow test modules
-  # - runipy test/learning/tensorflow/test_TF_notebook.ipynb
-  # - runipy test/learning/tensorflow/test_parallel_grid_search.ipynb
+  - runipy test/learning/tensorflow/test_TF_notebook.ipynb
+  - runipy test/learning/tensorflow/test_parallel_grid_search.ipynb
 
   # Runs intro tutorial notebooks
   - runipy tutorials/intro/Intro_Tutorial_1.ipynb
